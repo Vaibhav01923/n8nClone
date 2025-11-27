@@ -1,7 +1,19 @@
+import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
+import { Client } from "./client";
+import { getQueryClient, trpc } from "@/trpc/server";
+import { Suspense } from "react";
+
 const Page = () => {
+  const queryCleint = getQueryClient();
+
+  void queryCleint.prefetchQuery(trpc.getUsers.queryOptions());
   return (
-    <div>
-      <h1 className="text-red-500">Page</h1>
+    <div className="min-h-screen min-w-screen flex items-center justify-center">
+      <HydrationBoundary state={dehydrate(queryCleint)}>
+        <Suspense fallback={<div>Loading...</div>}>
+          <Client />
+        </Suspense>
+      </HydrationBoundary>
     </div>
   );
 };
